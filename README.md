@@ -43,33 +43,33 @@ Keep the key out of prompts, logs, and committed files. Result URLs from the API
 
 ## Install
 
-Clone the repo, install Python dependencies, then copy skills into your agent's skills directory.
-
-### Option 1: Windows PowerShell
-
-```powershell
-git clone https://github.com/tflowsec/flux-sprite-forge.git
-cd .\flux-sprite-forge
-python -m pip install -r .\requirements.txt
-
-# Claude Code
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\skills" | Out-Null
-Copy-Item -Recurse -Force ".\skills\*" "$env:USERPROFILE\.claude\skills\"
-```
-
-### Option 2: macOS / Linux
+Install with the open [skills CLI](https://github.com/vercel-labs/skills) (`npx skills`, supports Claude Code, Codex, Cursor, OpenCode, and 70+ other agents):
 
 ```bash
-git clone https://github.com/tflowsec/flux-sprite-forge.git
-cd ./flux-sprite-forge
-python3 -m pip install -r ./requirements.txt
+# Install all three skills (interactive)
+npx skills add tflowsec/flux-sprite-forge
 
-# Claude Code
-mkdir -p ~/.claude/skills
-cp -R ./skills/* ~/.claude/skills/
+# Install specific skills to a specific agent
+npx skills add tflowsec/flux-sprite-forge --skill generate2dsprite --skill generate2dmap -a claude-code
+
+# Install globally (available across all projects instead of the current one)
+npx skills add tflowsec/flux-sprite-forge -g -a claude-code
+
+# List available skills without installing
+npx skills add tflowsec/flux-sprite-forge --list
 ```
 
-For other agents, copy `skills/*` into the equivalent skills directory. Start a new session after installation so skills reload.
+The CLI auto-detects your installed agents and symlinks skills into their skill directories (pass `--copy` if you prefer plain copies). Updates are one command: `npx skills update`.
+
+Then install the Python dependencies used by the local post-processors:
+
+```bash
+python -m pip install Pillow numpy
+```
+
+(`ffmpeg` on `PATH` is only needed for `video2dsprite` frame extraction.)
+
+Start a new agent session after installation so skills reload.
 
 ## Model Routing and Cost
 
