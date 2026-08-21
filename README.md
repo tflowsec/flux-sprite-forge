@@ -1,4 +1,4 @@
-# flux-sprit-forge
+# flux-sprite-forge
 
 Agent skills for game-ready 2D sprites, layered maps, and engine-ready prototypes — **powered by the [FLUX API](https://docs.bfl.ai) from Black Forest Labs**.
 
@@ -48,8 +48,8 @@ Clone the repo, install Python dependencies, then copy skills into your agent's 
 ### Option 1: Windows PowerShell
 
 ```powershell
-git clone https://github.com/tflowsec/flux-sprit-forge.git
-cd .\flux-sprit-forge
+git clone https://github.com/tflowsec/flux-sprite-forge.git
+cd .\flux-sprite-forge
 python -m pip install -r .\requirements.txt
 
 # Claude Code
@@ -60,8 +60,8 @@ Copy-Item -Recurse -Force ".\skills\*" "$env:USERPROFILE\.claude\skills\"
 ### Option 2: macOS / Linux
 
 ```bash
-git clone https://github.com/tflowsec/flux-sprit-forge.git
-cd ./flux-sprit-forge
+git clone https://github.com/tflowsec/flux-sprite-forge.git
+cd ./flux-sprite-forge
 python3 -m pip install -r ./requirements.txt
 
 # Claude Code
@@ -127,7 +127,7 @@ Use $generate2dmap to create a Godot-editable RPG map with separated props, enco
 ## Repository Layout
 
 ```
-flux-sprit-forge/
+flux-sprite-forge/
   README.md
   requirements.txt
   skills/
