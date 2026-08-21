@@ -15,11 +15,11 @@ base still → FLUX 3 i2v (in-place motion) → extract frames → chroma key �
 
 | Requirement | Notes |
 | --- | --- |
-| `BFL_API_KEY` env var | Get a key at https://dashboard.bfl.ai and add credits. Needed for both the base still and the video |
+| BFL API key | `BFL_API_KEY` env var, `BFL_API_KEY_FILE`, or `~/.bfl_api_key`. Get a key at https://dashboard.bfl.ai and add credits. Needed for both the base still and the video |
 | FLUX 3 video access | `POST /v1/flux-3-video`, `i2v` mode — animates keyframe images |
 | Python + Pillow + numpy + ffmpeg on PATH | Local frame extraction and postprocessing |
 
-If `BFL_API_KEY` is unset, **stop and explain**. Do not fake motion with code-drawn frames.
+If no API key is found (env var or key file), **stop and explain**. Do not fake motion with code-drawn frames.
 
 This skill is an **optional denser-motion path**. It does **not** replace `$generate2dsprite`:
 
@@ -48,7 +48,7 @@ Infer from the user request:
 
 ## Agent rules
 
-1. **Check the gate first.** No `BFL_API_KEY` → stop and explain. Never fake the video step with code-drawn frames.
+1. **Check the gate first.** No API key found → stop and explain. Never fake the video step with code-drawn frames.
 2. **Still → video, never text-to-video alone.** Stage frame 1 as a clean still (`flux_generate.py`, with `--input-image` when matching a reference). Then animate it with FLUX 3 `i2v`.
 3. **In-place motion.** Prompt for run/walk **in place** facing a fixed direction. No camera pan, no background scroll, no scene change. Subject stays roughly centered.
 4. **Solid magenta background** on the base and preserved in the video prompt (`#FF00FF` / pure magenta). Required for flood-fill chroma.

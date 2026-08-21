@@ -4,8 +4,8 @@
 Thin transport wrapper for this skill: the agent writes the creative prompt,
 this script handles submit -> poll -> download deterministically. Stdlib only.
 
-Requires BFL_API_KEY in the environment (https://dashboard.bfl.ai).
-Docs: https://docs.bfl.ai
+Reads the API key from BFL_API_KEY, BFL_API_KEY_FILE, or ~/.bfl_api_key
+(https://dashboard.bfl.ai). Docs: https://docs.bfl.ai
 """
 
 import argparse
@@ -48,6 +48,26 @@ def encode_local_image(path: str) -> str:
         return base64.b64encode(fh.read()).decode("ascii")
 
 
+def load_api_key() -> str:
+    key = os.environ.get("BFL_API_KEY", "").strip()
+    if key:
+        return key
+    for path in (os.environ.get("BFL_API_KEY_FILE"), os.path.expanduser("~/.bfl_api_key")):
+        if path and os.path.isfile(path):
+            with open(path, encoding="utf-8") as fh:
+                text = fh.read().strip()
+            if text.startswith("BFL_API_KEY"):
+                text = text.split("=", 1)[-1].strip().strip('"').strip("'")
+            if text:
+                return text
+    raise SystemExit(
+        "No API key found. Get one at https://dashboard.bfl.ai, then either:\n"
+        "  - export BFL_API_KEY, or\n"
+        "  - save it to ~/.bfl_api_key (raw key on one line, or BFL_API_KEY=... style), or\n"
+        "  - point BFL_API_KEY_FILE at the file."
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     src = parser.add_mutually_exclusive_group(required=True)
@@ -68,10 +88,7 @@ def main() -> None:
     parser.add_argument("--timeout", type=float, default=300, help="Give up after this many seconds")
     args = parser.parse_args()
 
-    api_key = os.environ.get("BFL_API_KEY", "").strip()
-    if not api_key:
-        raise SystemExit("BFL_API_KEY is not set. Get a key at https://dashboard.bfl.ai "
-                         "and export it before running this script.")
+    api_key = load_api_key()
 
     if args.prompt_file:
         with open(args.prompt_file, encoding="utf-8") as fh:

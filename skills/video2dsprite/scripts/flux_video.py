@@ -3,7 +3,8 @@
 
 Thin transport wrapper for the video2dsprite skill: the agent writes the
 motion prompt, this script handles submit -> poll -> download deterministically.
-Stdlib only. Requires BFL_API_KEY in the environment (https://dashboard.bfl.ai).
+Stdlib only. Reads the API key from BFL_API_KEY, BFL_API_KEY_FILE, or
+~/.bfl_api_key (https://dashboard.bfl.ai).
 
 Modes:
   i2v            animate keyframe image(s) -- the default for this skill
@@ -57,6 +58,26 @@ def download(url: str, path: str) -> int:
     return len(blob)
 
 
+def load_api_key() -> str:
+    key = os.environ.get("BFL_API_KEY", "").strip()
+    if key:
+        return key
+    for path in (os.environ.get("BFL_API_KEY_FILE"), os.path.expanduser("~/.bfl_api_key")):
+        if path and os.path.isfile(path):
+            with open(path, encoding="utf-8") as fh:
+                text = fh.read().strip()
+            if text.startswith("BFL_API_KEY"):
+                text = text.split("=", 1)[-1].strip().strip('"').strip("'")
+            if text:
+                return text
+    raise SystemExit(
+        "No API key found. Get one at https://dashboard.bfl.ai, then either:\n"
+        "  - export BFL_API_KEY, or\n"
+        "  - save it to ~/.bfl_api_key (raw key on one line, or BFL_API_KEY=... style), or\n"
+        "  - point BFL_API_KEY_FILE at the file."
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=["i2v", "t2v", "draft_enhance"], default="i2v")
@@ -77,10 +98,7 @@ def main() -> None:
     parser.add_argument("--timeout", type=float, default=900.0)
     args = parser.parse_args()
 
-    api_key = os.environ.get("BFL_API_KEY", "").strip()
-    if not api_key:
-        raise SystemExit("BFL_API_KEY is not set. Get a key at https://dashboard.bfl.ai "
-                         "and export it before running this script.")
+    api_key = load_api_key()
 
     payload: dict = {"mode": args.mode}
     if args.mode == "i2v":

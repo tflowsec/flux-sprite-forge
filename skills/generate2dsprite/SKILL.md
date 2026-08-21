@@ -189,7 +189,7 @@ Pass both the master frame and the anchor sheet as input images (`--input-image 
 
 ### 3. Generate the raw image
 
-Run `scripts/flux_generate.py`. It submits the job, polls, and downloads the PNG in one call. Requires `BFL_API_KEY` in the environment.
+Run `scripts/flux_generate.py`. It submits the job, polls, and downloads the PNG in one call. Reads the key from `BFL_API_KEY`, `BFL_API_KEY_FILE`, or `~/.bfl_api_key`.
 
 ```bash
 python scripts/flux_generate.py \

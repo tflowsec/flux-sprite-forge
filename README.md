@@ -26,17 +26,21 @@ Agent Sprite Forge is not just a folder of prompts. It is an agent-first 2D game
 
 - Python 3.10+, `Pillow`, `numpy`
 - `ffmpeg` on `PATH` (only for `video2dsprite` frame extraction)
-- A BFL account with credits and `BFL_API_KEY` exported (1 credit = $0.01)
+- A BFL account with credits and your API key available as `BFL_API_KEY`, in `~/.bfl_api_key`, or via `BFL_API_KEY_FILE` (1 credit = $0.01)
 
 ## API Key Setup
 
 1. Register at https://dashboard.bfl.ai and add credits (start with $10-20).
 2. Create an API key under **API → Keys**.
-3. Export it:
+3. Provide it — pick one:
 
 ```bash
 export BFL_API_KEY="bfl_..."        # bash / zsh
 setx BFL_API_KEY "bfl_..."          # Windows (new terminal)
+
+# Or save it once to a key file; the scripts pick it up automatically
+# (raw key on one line, or BFL_API_KEY=... style):
+echo "bfl_..." > ~/.bfl_api_key     # override the path with BFL_API_KEY_FILE
 ```
 
 Keep the key out of prompts, logs, and committed files. Result URLs from the API expire within minutes; the helper scripts download immediately.
